@@ -125,6 +125,7 @@ int main()
                  }
                  //person with role found
                  if(per.mp[role.first]>=role.second){
+                     cout<<per.mp[role.first]<<' '<<role.second<<endl;
                      ret+=per.name+' ';
                      found=true;
                      break;

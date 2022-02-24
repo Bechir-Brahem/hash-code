@@ -134,12 +134,25 @@ int main()
         Assign tmpAssign;
         for(auto idRole:proj.idOfRoles){
             auto list_of_potential_colab=skil_to_perss[idRole];
-            
-            tmpAssign.role_to_pers[idRole]= // id personne;
+            random_shuffle(list_of_potential_colab.begin(),list_of_potential_colab.end());
+            for(auto potential_colab:list_of_potential_colab){
+                if(vPer[potential_colab].mp[idRole]>=proj.roles[idRole]){
+                    tmpAssign.role_to_pers[idRole]=potential_colab;
+                    break;
+                }
+            }
+        }
+        //zid Assign
+        if(tmpAssign.role_to_pers.size()==proj.nRoles){
+            tmpAssign.proj=proj;
+            assigns.push_back(tmpAssign);
         }
     }
     
-
+    cout<<assigns.size()<<endl;
+    for(auto assign: assigns){
+        assign.print();
+    }
   
 
     return 0;
