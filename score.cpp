@@ -3,10 +3,7 @@
 using namespace std;
 int skLen = 0;
 
-//role + skill lvl => id l3bed eli y3rfou
-map<pair<int,int>, vector <int>> skill_to_pers;
-//role => id l3bed eli y3rfou
-map<int , vector <int> > skil_to_perss ;
+map<int, map<int, int>> skill_to_pers;
 map<string, int> skToInt;
 map<int, string> intToSk;
 
@@ -34,7 +31,7 @@ public:
                 skToInt[a] = skLen++;
                 intToSk[skLen - 1] = a;
             }
-            skill_to_pers[{skToInt[a],q}].push_back(id);
+            skill_to_pers[skToInt[a]][q] = id;
             mp[skToInt[a]] = q;
         }
     }
@@ -53,7 +50,6 @@ public:
     {
         cout << name << ' ';
     }
-    
 };
 class Project
 {
@@ -62,7 +58,7 @@ public:
     string name;
     int bbefore, nRoles, nDays, score;
     map<int, int> roles;
-    vector<int> idOfRoles;
+    vector<int> orderOfRoles;
     void read(int i)
     {
         id = i;
@@ -73,7 +69,7 @@ public:
         {
             cin >> tmp >> x;
             roles[skToInt[tmp]] = x;
-            idOfRoles.push_back(skToInt[tmp]);
+            orderOfRoles.push_back(skToInt[tmp]);
         }
     }
     void print()
@@ -94,20 +90,7 @@ public:
 vector<Person> vPer;
 vector<Project> vPro;
 
-class Assign
-{
-public:
-    Project proj;
-    
-    map<int, int> role_to_pers;
-    void print(){
-        cout<<proj.name<<endl;
-        for(int i=0;i<proj.nRoles;i++){
-            cout<<vPer[role_to_pers[proj.idOfRoles[i]] ].name<<' ';
-        }
-        cout<<endl;
-    }
-};
+
 
 int main()
 {
@@ -129,18 +112,41 @@ int main()
     }
 
     sort(vPro.begin(),vPro.end());
-    vector<Assign> assigns;
-    for(auto proj:vPro){
-        Assign tmpAssign;
-        for(auto idRole:proj.idOfRoles){
-            auto list_of_potential_colab=skil_to_perss[idRole];
-            
-            tmpAssign.role_to_pers[idRole]= // id personne;
-        }
+    string finalRet="";
+    int id=0;
+    bool found=false;
+    for(Project p:vPro){
+       string ret=p.name+'\n';
+        found=false;
+         for (auto const &role : p.roles){
+             for(Person per:vPer){
+                 if(per.mp.find(role.first)==per.mp.end()){
+                     continue;
+                 }
+                 //person with role found
+                 if(per.mp[role.first]>=role.second){
+                     ret+=per.name+' ';
+                     found=true;
+                     break;
+                 }      
+             }
+             if(found){
+                 continue;
+             }else{
+                 break;
+             }
+
+         }
+         if(found){
+             id++;
+             finalRet+=ret+'\n';
+         }
+        //omi ba7theya hetha aleh msaker manajamch nahki
     }
     
+    
 
-  
+  cout<<id<<endl<<finalRet;
 
     return 0;
 }
