@@ -70,6 +70,7 @@ public:
             cin >> tmp >> x;
             roles[skToInt[tmp]] = x;
             orderOfRoles.push_back(skToInt[tmp]);
+
         }
     }
     void print()
@@ -83,7 +84,7 @@ public:
     }
     bool operator<(const Project &p) const
     {
-        return score > p.score;
+        return nDays < p.nDays;
     }
 };
 // ma t7awalch 
@@ -118,14 +119,14 @@ int main()
     for(Project p:vPro){
        string ret=p.name+'\n';
         found=false;
-         for (auto const &role : p.roles){
+         for (int role:p.orderOfRoles){
              for(Person per:vPer){
-                 if(per.mp.find(role.first)==per.mp.end()){
+                 if(per.mp.find(role)==per.mp.end()){
                      continue;
                  }
                  //person with role found
-                 if(per.mp[role.first]>=role.second){
-                     cout<<per.mp[role.first]<<' '<<role.second<<endl;
+                 if(per.mp[role]>=p.roles[role]){
+                     //cout<<per.mp[role]<<' '<<p.roles[role]<<endl;
                      ret+=per.name+' ';
                      found=true;
                      break;

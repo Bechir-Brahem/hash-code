@@ -18,6 +18,7 @@ public:
     int nskills;
     //skill -> skill lvl
     map<int, int> mp;
+    map<int, int> curr_mp;
     void Read(int i)
     {
         cin >> name;
@@ -35,6 +36,7 @@ public:
                 intToSk[skLen - 1] = a;
             }
             skill_to_pers[{skToInt[a],q}].push_back(id);
+            skil_to_perss[skToInt[a]].push_back(id);
             mp[skToInt[a]] = q;
         }
     }
@@ -87,7 +89,8 @@ public:
     }
     bool operator<(const Project &p) const
     {
-        return score > p.score;
+        
+        return score-nDays > p.score-p.nDays;
     }
 };
 // ma t7awalch 
@@ -98,7 +101,7 @@ class Assign
 {
 public:
     Project proj;
-    
+    //role=> pers
     map<int, int> role_to_pers;
     void print(){
         cout<<proj.name<<endl;
@@ -132,18 +135,41 @@ int main()
     vector<Assign> assigns;
     for(auto proj:vPro){
         Assign tmpAssign;
+        set<int> usedPers;
+        set<int> last_usedPers;
+
         for(auto idRole:proj.idOfRoles){
             auto list_of_potential_colab=skil_to_perss[idRole];
             random_shuffle(list_of_potential_colab.begin(),list_of_potential_colab.end());
             for(auto potential_colab:list_of_potential_colab){
                 if(vPer[potential_colab].mp[idRole]>=proj.roles[idRole]){
-                    tmpAssign.role_to_pers[idRole]=potential_colab;
-                    break;
+                    if(usedPers.find(potential_colab)==usedPers.end()&&last_usedPers.find(potential_colab)==last_usedPers.end()){
+                        tmpAssign.role_to_pers[idRole]=potential_colab;
+                        usedPers.insert(potential_colab);
+                        break;
+                    }else{//saha khalil wa7chhh 💘🥰
+                        for(int i=0;i<min(150,nPer);i++){   
+                            auto choose_rand=max(0,rand()%nPer);
+                            if(usedPers.find(choose_rand)==usedPers.end()&&vPer[choose_rand].mp[idRole]>=proj.roles[idRole]-1&&last_usedPers.find(potential_colab)==last_usedPers.end()){
+                                tmpAssign.role_to_pers[idRole]=choose_rand;
+                                usedPers.insert(choose_rand);
+                                goto here;
+                            }
+                        }
+                    }
                 }
+                here:;
             }
         }
         //zid Assign
         if(tmpAssign.role_to_pers.size()==proj.nRoles){
+            last_usedPers=usedPers;
+            usedPers.clear();
+            for(auto i:tmpAssign.role_to_pers){
+                if(vPer[i.second].mp[i.first]<=proj.roles[i.first]){
+                    vPer[i.second].mp[i.first]++;
+                }
+            }
             tmpAssign.proj=proj;
             assigns.push_back(tmpAssign);
         }
